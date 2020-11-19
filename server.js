@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const userRouter = require('./routes/user');
+const userRouter = require('./app/user/userRouter');
 const app = express();
 const url = 'mongodb://127.0.0.1:27017/cruddb';
 

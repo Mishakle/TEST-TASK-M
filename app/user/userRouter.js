@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-let userSchema = require('../models/userModel');
+let userSchema = require('./userModel');
 
 // GET certain user by id
 router.get('/user/:id', async(req, res, next) => {
