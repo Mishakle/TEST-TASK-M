@@ -5,13 +5,12 @@ let userSchema = require('./userModel');
 async function getUser(req, res, next) {
     try {
         const { id } = req.params;
-        await userSchema.findById(id, async(err, getUser) => {
+        await userSchema.findById(id, (err, getUser) => {
             if (!getUser) {
                 res.status(404).send('User does not exist');
             }
             // Set data to Redis
-            console.log(getUser);
-            await client.setex(id, 60, JSON.stringify(getUser));
+            client.setex(id, 60, JSON.stringify(getUser));
             res.json(getUser);
         });
     } catch(error) {

@@ -15,7 +15,7 @@ async function changeUser(req, res, next) {
                 getUser.gender = gender;
                 await getUser.save();
                 // Set data to Redis
-                await client.setex(id, 60, JSON.stringify(getUser));
+                client.setex(id, 60, JSON.stringify(getUser));
                 res.json('User was updated');
             }
         });
