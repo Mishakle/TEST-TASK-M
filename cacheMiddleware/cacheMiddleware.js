@@ -7,9 +7,9 @@ function cache(req, res, next) {
         if (err) throw err;
 
         if (data !== null) {
-        res.json(data);
+            res.json(data);
         } else {
-        next();
+            next();
         }
     });
 }
