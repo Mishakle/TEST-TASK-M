@@ -1,15 +1,21 @@
 const express = require('express');
 const router = express.Router();
 let userSchema = require('./userModel');
+const redis = require('redis');
+const client = redis.createClient(6379);
+const cache = require('../../cacheMiddleware/cacheMiddleware');
 
 // GET certain user by id
-router.get('/user/:id', async(req, res, next) => {
+router.get('/user/:id', cache, async(req, res, next) => {
     try {
         const { id } = req.params;
-        await userSchema.findById(id, (err, getUser) => {
+        await userSchema.findById(id, async(err, getUser) => {
             if (!getUser) {
                 res.status(404).send('User does not exist');
             }
+            // Set data to Redis
+            console.log(getUser);
+            await client.setex(id, 60, JSON.stringify(getUser));
             res.json(getUser);
         });
     } catch(error) {
@@ -32,7 +38,7 @@ router.post('/user', async(req, res, next) => {
 })
 
 // CHANGE user information
-router.put('/user/:id', async(req, res, next) => {
+router.put('/user/:id', cache, async(req, res, next) => {
     try {
         const { id } = req.params;
         const { name, birthday, gender } = req.body;
@@ -43,7 +49,10 @@ router.put('/user/:id', async(req, res, next) => {
                 getUser.name = name;
                 getUser.birthday = birthday;
                 getUser.gender = gender;
-                const updatedUser = await getUser.save();
+                await getUser.save();
+                // Set data to Redis
+                console.log(getUser);
+                await client.setex(id, 60, getUser);
                 res.json('User was updated');
             }
         });
